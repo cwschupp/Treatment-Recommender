@@ -1,0 +1,153 @@
+CREATE TABLE diagnosis
+(diagnosis_id int, 
+ patient_id int, 
+ visit_id int, 
+ visit_date timestamp, 
+ diagnosis_status char(50), 
+ is_new bool, 
+ is_ruleout bool, 
+ position int, 
+ is_existing_with_new_problem bool, 
+ complexity_level char(25), 
+ default_weight int, 
+ diagnosis_name char(255), 
+ diagnosis_type char(100), 
+ follow_up_unit char(10), 
+ follow_up_value int, 
+ label_text char(255), 
+ icd9 char(50), 
+ icd10 char(25), 
+ exam_finding bool, 
+ medical_domain char(30), 
+ special_diagnosis_type char(25), 
+ visible bool, 
+ pod varchar);
+
+COPY diagnosis 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/diagnosis.tsv' 
+    WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE psoriasis AS
+	(SELECT *
+	 FROM diagnosis
+	 WHERE medical_domain='DERMATOLOGY' AND diagnosis_name='Psoriasis');
+
+DROP TABLE diagnosis;
+
+################################################################################
+
+CREATE TABLE patient
+(patient_id int, 
+ year_of_birth int, 
+ sex char(20), 
+ marital_status char(50), 
+ smoking_status char(40), 
+ ethnic_group char(30), 
+ is_cms_patient bool, 
+ deceased bool, 
+ year_of_death int,
+ visible bool, 
+ pod varchar);
+
+COPY patient 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/patient.tsv' 
+	WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_patient AS
+	SELECT DISTINCT *
+	FROM (SELECT pa.* 
+	      FROM psoriasis ps
+		  JOIN patient pa
+		  ON ps.patient_id=pa.patient_id AND ps.pod=pa.pod) a;
+
+DROP TABLE patient;
+
+################################################################################
+
+CREATE TABLE procedure
+(procedure_id int,
+ patient_id int,
+ visit_id int,
+ diagnosis_id int,
+ visit_date timestamp,
+ plan_date timestamp,
+ order_only bool,
+ dynamic_procedure bool,
+ dynamic_procedure_type char(20),
+ follow_up_unit char(20),
+ follow_up_value int,
+ global_period int,
+ log_result char(20),
+ pathology_req bool,
+ procedure_alias char(255),
+ procedure_name char(255),
+ risk_category char(25),
+ risk_level char(10),
+ work_up bool,
+ allow_for_25_modifier bool,
+ procedure_short_alias char(8),
+ medical_domain char(30),
+ previous_plan bool,
+ procedure_log bool,
+ test_log bool,
+ scheduling_log bool,
+ alias_exam char(50),
+ guidance_separate_report bool,
+ separate_report bool,
+ separate_identifiable bool,
+ cpoe_type char(10),
+ labs_enabled bool,
+ loinc_num char(7),
+ data_point_clinical_lab bool,
+ data_point_decision_old_record bool,
+ data_point_discuss_test bool,
+ data_point_independent_review bool,
+ data_point_medicine bool,
+ data_point_rad bool,
+ data_point_review_old_record bool,
+ pod varchar);
+
+COPY procedure 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/procedure.tsv' 
+    WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_procedure AS
+	(SELECT pr.* 
+	 FROM psoriasis ps
+		JOIN procedure pr
+		ON ps.patient_id=pr.patient_id AND ps.visit_id=pr.visit_id
+			AND ps.diagnosis_id=pr.diagnosis_id AND ps.pod=pr.pod);
+
+DROP TABLE procedure;
+
+################################################################################
+
+CREATE TABLE procedure_metadata
+(procedure_id int,
+ variable_label char(255),
+ variable_name char(50),
+ variable_type char(20),
+ range_response_value varchar,
+ response_value varchar,
+ response_value_cpt char(10),
+ pod varchar);
+
+COPY procedure_metadata 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/procedure_metadata.tsv' 
+    WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_procedure_metadata AS
+	(SELECT prm.* 
+	 FROM ps_procedures pr
+		LEFT JOIN procedure_metadata prm
+		ON pr.procedure_id=prm.procedure_id AND pr.pod=prm.pod);
+
+
+
+
+
+
+
+
+
+

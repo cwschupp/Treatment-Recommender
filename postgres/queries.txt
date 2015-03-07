@@ -1,0 +1,41 @@
+SELECT COUNT(*)
+FROM psoriasis; 
+
+SELECT COUNT(*)
+FROM ps_patient;
+
+SELECT COUNT(*)
+FROM ps_procedure;
+
+SELECT COUNT(*)
+FROM ps_procedure_metadata;
+
+#creating a subset to work with
+CREATE TABLE temp AS
+	SELECT patient_id, 
+	       2015 - year_of_birth AS age, 
+	       sex,
+	       smoking_status,
+	       pod
+	FROM ps_patient
+	LIMIT 100;
+
+SELECT a.*, b.diagnosis_id, b.visit_id, b.visit_date,
+       b.default_w 
+FROM temp a
+JOIN psoriasis b
+ON a.patient_id=b.patient_id;
+
+
+SELECT patient_id, visit_date, COUNT(*)
+FROM psoriasis
+GROUP BY patient_id, visit_date
+ORDER BY patient_id, visit_date;
+
+SELECT * 
+FROM (SELECT DISTINCT *
+	  FROM ps_patient) a
+LIMIT 10;
+
+
+
