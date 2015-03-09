@@ -10,32 +10,54 @@ FROM ps_procedure;
 SELECT COUNT(*)
 FROM ps_procedure_metadata;
 
-#creating a subset to work with
-CREATE TABLE temp AS
-	SELECT patient_id, 
-	       2015 - year_of_birth AS age, 
-	       sex,
-	       smoking_status,
-	       pod
-	FROM ps_patient
-	LIMIT 100;
+SELECT COUNT(*)
+FROM ps_outcome;
 
-SELECT a.*, b.diagnosis_id, b.visit_id, b.visit_date,
-       b.default_w 
-FROM temp a
-JOIN psoriasis b
-ON a.patient_id=b.patient_id;
+SELECT COUNT(*)
+FROM ps_treatment;
+
+CREATE TABLE first_visit AS
+	SELECT a.patient_id, a.first_date, b.diagnosis_id, b.visit_id, b.pod
+	FROM (SELECT patient_id, min(visit_date) AS first_date, pod 
+		  FROM psoriasis
+		  GROUP BY patient_id, pod) a
+	LEFT JOIN psoriasis b
+	ON a.patient_id=b.patient_id AND a.first_date=b.visit_date 
+	   AND a.pod=b.pod;
+
+#combining patient characteristics into one table
+CREATE TABLE ps_combined AS
+		(SELECT a.patient_id, 
+		       2015 - a.year_of_birth AS age, 
+		       a.sex,
+		       b.race,
+		       a.smoking_status,
+		       a.pod
+		FROM ps_patient a
+		LEFT JOIN ps_patient_race b
+		ON a.patient_id=b.patient_id AND a.pod=b.pod);
 
 
-SELECT patient_id, visit_date, COUNT(*)
-FROM psoriasis
-GROUP BY patient_id, visit_date
-ORDER BY patient_id, visit_date;
 
-SELECT * 
-FROM (SELECT DISTINCT *
-	  FROM ps_patient) a
-LIMIT 10;
+#creating dataset to export for analysis
+\f ','
+\a
+\o '/Users/clayton.schupp/cwschupp/project/data/sample/data.csv'
+SELECT a.patient_id, a.age, a.sex, a.fam_hist
+       b.pga, b.bsa, b.treatment 
+FROM ps_combined a
+JOIN first_visit b
+ON a.patient_id=b.patient_id AND a.pod=b.pod;
+\o
+
+\f ','
+\a
+\o '/Users/clayton.schupp/cwschupp/project/data/sample/data.csv'
+SELECT patient_id, age, sex, race, smoking_status
+FROM ps_combined;
+\o
+
+
 
 
 

@@ -64,6 +64,51 @@ DROP TABLE patient;
 
 ################################################################################
 
+CREATE TABLE patient_family_history
+(patient_id int,
+ snomed_concept_id char(25),
+ snomed_concept_name varchar,
+ snomed_concept_type varchar,
+ date_recorded timestamp,
+ status char(25),
+ family_member char(20),
+ visible bool, 
+ pod varchar);
+
+COPY patient_family_history 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/patient_family_history.tsv' 
+	WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_patient_family_history AS
+	SELECT pa.* 
+      FROM psoriasis ps
+	  LEFT JOIN patient_family_history pa
+	  ON ps.patient_id=pa.patient_id AND ps.pod=pa.pod;
+
+DROP TABLE patient_family_history;
+
+################################################################################
+
+CREATE TABLE patient_race 
+(patient_id int,
+race char(50),
+pod varchar);
+
+COPY patient_race 
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/patient_race.tsv' 
+	WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_patient_race AS
+	SELECT DISTINCT *
+	FROM (SELECT pr.* 
+	      FROM ps_patient pa
+		  JOIN patient_race pr
+		  ON pa.patient_id=pr.patient_id AND pa.pod=pr.pod) a;
+
+DROP TABLE patient_race;
+
+################################################################################
+
 CREATE TABLE procedure
 (procedure_id int,
  patient_id int,
@@ -141,6 +186,54 @@ CREATE TABLE ps_procedure_metadata AS
 	 FROM ps_procedures pr
 		LEFT JOIN procedure_metadata prm
 		ON pr.procedure_id=prm.procedure_id AND pr.pod=prm.pod);
+
+DROP TABLE procedure_metadata;
+
+################################################################################
+
+CREATE TABLE treatment
+(patient_id int,
+ visit_id int,
+ treatment char(35),
+ pod varchar);
+
+COPY treatment
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/treatment.tsv' 
+    WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_treatment AS
+	(SELECT tr.* 
+	 FROM ps_procedure pr
+		RIGHT JOIN treatment tr
+		ON pr.patient_id=tr.patient_id AND pr.visit_id=tr.visit_id 
+		   AND pr.pod=tr.pod); 
+
+DROP TABLE treatment;
+
+################################################################################
+
+CREATE TABLE outcome
+(patient_id int,
+ visit_id int,
+ pga int,
+ bsa int,
+ pod varchar);
+
+ COPY outcome
+	FROM '/Users/clayton.schupp/cwschupp/project/data/sample/outcome.tsv' 
+    WITH DELIMITER E'\t' CSV HEADER NULL 'NULL';
+
+CREATE TABLE ps_outcome AS
+	(SELECT out.* 
+	 FROM ps_procedure pr
+		RIGHT JOIN outcome out
+		ON pr.patient_id=out.patient_id AND pr.visit_id=out.visit_id 
+		   AND pr.pod=out.pod); 
+
+DROP TABLE outcome;
+
+################################################################################
+
 
 
 
