@@ -1,6 +1,11 @@
 import re
 import sys
 
+
+#program to strip out some weird character error "0x00"
+#that postgresql keeps throwing 
+
+
 fname = sys.argv[1]
 
 f = open(fname)
