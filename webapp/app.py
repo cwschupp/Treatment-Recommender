@@ -16,7 +16,7 @@ def index():
 @app.route('/collect_data', methods=['POST'])
 def collect():
 	data = request.form.to_dict()
-	ipdb.set_trace()
+	#ipdb.set_trace()
 
 @app.route('/output')
 def classifier():

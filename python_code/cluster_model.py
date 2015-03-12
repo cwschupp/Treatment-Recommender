@@ -3,7 +3,11 @@ import numpy as np
 from sklearn.preprocessing import scale
 from sklearn.cluster import KMeans
 import cPickle as pickle
-import ipdb
+import matplotlib.pyplot as plt
+from collections import Counter
+import plotly.plotly as py
+from plotly.graph_objs import *
+py.sign_in('cwschupp', 'ul2e0se0og')
 
 
 def get_data(file):
@@ -117,12 +121,15 @@ class Model(object):
         self._preprocess(self.df_cont, self.df_cat)
 
         print 'finding optimal number of clusters'
-        self._gap_statistic(self.X, self.max_k)
+        #self._gap_statistic(self.X, self.max_k)
 
         print 'building final model'
         self.best_k=8
         self.model=KMeans(n_clusters=self.best_k)
         self.model.fit(self.X)
+
+        print 'creating cluster level barplots'
+        self.cluster_barplots()
         return self
 
     def classify_new_patient(self, input_values):
@@ -137,6 +144,29 @@ class Model(object):
             new_input = new_input + self.cat_dict[var][input_values[var]]
         new_input = np.array(new_input)
         return self.model.predict(new_input)
+
+    def cluster_barplots(self):
+        self.treatments = {treatment for treatment in self.df_y}
+        cluster_results_dict = {}
+        for cluster in range(self.model.n_clusters):
+            c = Counter()
+            for treatment in self.treatments:
+                c[treatment] = 0
+            for treatment in self.df_y[self.model.labels_ == cluster]:
+                c[treatment] += 1
+            cluster_results_dict[cluster] = {'treatments':c}
+            cluster_size = sum(c.values())
+            
+            data = Data([
+                Bar(
+                    x=[tup[0] for tup in c.most_common(3)],
+                    y=[tup[1]/float(cluster_size) for tup in c.most_common(3)]
+                )
+            ])
+
+            plot_url = py.plot(data, filename='basic-bar', fileopt='new')
+            cluster_results_dict[cluster].update({'bar chart':plot_url})
+        self.cluster_dict = cluster_results_dict
 
 def build_model(filepath):
     df_cont, df_cat, df_y = get_data(filepath)
