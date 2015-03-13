@@ -167,8 +167,8 @@ def build_model(filepath, model_filename):
     return model
 
 if __name__ == '__main__':
-    filepath = '../../data/sample/analysis_dataset.tsv'
-    model_filename = '../webapp/model.pkl'
+    filepath = '../../../data/sample/analysis_dataset.tsv'
+    model_filename = 'model.pkl'
     build_model(filepath, model_filename)
     
 
