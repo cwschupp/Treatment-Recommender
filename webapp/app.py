@@ -4,7 +4,8 @@ import jinja2
 import sys
 sys.path.insert(0, './model')
 from cluster_model import Model
-from bar_chart import barchart
+from bar_charts import treatment_barchart, pga_barchart
+from line_chart import bsa_linechart
 
 app = Flask(__name__)
 
@@ -37,11 +38,21 @@ def collect_and_output():
 
     #passing in user input to classify patient
     cluster = model.classify_new_patient(data)[0]
-    url = model.cluster_results_dict[cluster]['bar_chart']
-    plot_size = '.embed?width=860&height=640'
-    barplot = url+plot_size
+    url = model.cluster_results_dict[cluster]['trt_bar_chart']
+    plot_size = '.embed?width=1200&height=900'
+    barplot1 = url+plot_size
+
+    url = model.cluster_results_dict[cluster]['pga_bar_chart']
+    plot_size = '.embed?width=600&height=450'
+    barplot2 = url+plot_size
+
+    url = model.cluster_results_dict[cluster]['bsa_line_chart']
+    plot_size = '.embed?width=600&height=450'
+    lineplot = url+plot_size
+
     return render_template('output.html', description=description, 
-                           barplot = barplot)
+                           barplot1 = barplot1, barplot2 = barplot2,
+                           lineplot = lineplot)
 
 # DEFINING PSORIASIS
 @app.route('/info')
