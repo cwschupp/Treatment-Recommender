@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np 
 from sklearn.preprocessing import scale
 from sklearn.cluster import KMeans
-import cPickle as pickle
+import dill as pickle
 import matplotlib.pyplot as plt
 from collections import Counter
 from bar_charts import treatment_barchart, pga_barchart
@@ -224,10 +224,12 @@ def build_model(filepath, model_filename, num_treatments=3, max_k=10):
             pickle.dump(model, fp)
     return model
 
+
 if __name__ == '__main__':
     filepath = '../../../data/sample/analysis_dataset.tsv'
     model_filename = 'model.pkl'
     build_model(filepath, model_filename)
+
     
 
 
