@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import dill as pickle
+import cPickle as pickle
 import jinja2
 import sys
 sys.path.insert(0, './model')
@@ -32,15 +32,15 @@ def collect_and_output():
                   'smoking status is {3} with  Psoriasis at {4} severity ' \
                   'and affects {5} percentage body surface, the following ' \
                   'are the most used treatments'.format(data['race'].lower(),
-                   data['sex'].lower(), data['age'], data['smoking'].lower(), 
-                   data['pga'], data['bsa'])
+                    data['sex'].lower(), data['age'], data['smoking'].lower(),
+                    data['pga'], data['bsa'])
     data['pga'] = pga_dict[data['pga']]
 
-    #loading pickled model
+    # loading pickled model
     with open('model/model.pkl', 'rb') as fp:
         model = pickle.load(fp)
 
-    #passing in user input to classify patient
+    # passing in user input to classify patient
     cluster = model.classify_new_patient(data)[0]
     url = model.cluster_results_dict[cluster]['trt_bar_chart']
     plot_size = '.embed?width=1200&height=900'
@@ -66,4 +66,4 @@ def definition():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8787, debug=True)
+    app.run(host='0.0.0.0', port=8787)
