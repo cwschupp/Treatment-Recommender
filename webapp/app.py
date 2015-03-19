@@ -28,10 +28,10 @@ def collect_and_output():
                 '4-Moderate': '4', '5-Marked': '5', '6-Severe': '6'}
     data = request.form.to_dict()
 
-    description = 'For a {0}, {1} patient that is {2} years old  whose ' \
-                  'smoking status is {3} with  Psoriasis at {4} severity ' \
-                  'and affects {5} percentage body surface, the following ' \
-                  'are the most used treatments'.format(data['race'].lower(),
+    description = ('For a {0}, {1} patient that is {2} years old  whose ' 
+                  'smoking status is {3} with  Psoriasis at {4} severity ' 
+                  'and affects {5} percentage body surface, the following ' 
+                  'are the most used treatments').format(data['race'].lower(),
                     data['sex'].lower(), data['age'], data['smoking'].lower(),
                     data['pga'], data['bsa'])
     data['pga'] = pga_dict[data['pga']]
@@ -47,11 +47,11 @@ def collect_and_output():
     barplot1 = url+plot_size
 
     url = model.cluster_results_dict[cluster]['pga_bar_chart']
-    plot_size = '.embed?width=600&height=450'
+    plot_size = '.embed?width=1200&height=900'
     barplot2 = url+plot_size
 
     url = model.cluster_results_dict[cluster]['bsa_line_chart']
-    plot_size = '.embed?width=600&height=450'
+    plot_size = '.embed?width=1200&height=900'
     lineplot = url+plot_size
 
     return render_template('output.html', description=description,

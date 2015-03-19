@@ -1,7 +1,7 @@
 Preliminary Proposal (Clayton Schupp)
 ===
 
-Scratch That Itch
+Let's Help Scratch That Itch
 ---
 
 Psoriasis is a common skin condition that changes the life cycle of skin cells
@@ -15,50 +15,40 @@ relief to the patient.
 Through a consulting project on which I am the statistician, I have access 
 to electronic medical record data for approximately 25% of all dermatology
 patients, corresponding to approximately 250,000 patients suffering with 
-psoriasis.  The data is collected directly from the treating doctor and is 
+Psoriasis.  The data is collected directly from the treating doctor and is 
 updated instantaneously in the cloud.  This allows a unique opportunity to
-use crowd-sourced data to guide treatment
+use crowd-sourced data to guide dermatologists in their treatment choice.
 
-Although I have not yet seen the data, I am currently working with their 
-data engineering team to obtain remote access to their big data infrastructure.
-Some high level statistics regarding the data available across all disease 
-diagnoses collected by the company: 23 Million(M) patient encounters, 13M 
-prescriptions, 7M lab results, 180M addresses. I am unsure at this moment 
-which features will be of primary interest; however, the goal of this
-project is if presented with a new patient, to classify them, and recommend 
-the best treatment personalized for them.
+The feature variables of interest are those that would be collected on 
+an initial examination of a new patient.  In addition to demographic and 
+behavioral data collected at intake such as age, gender, race, smoking status;
+a new patient would present with characteristics specific to psoriasis.  These features would include some if not all of the following: symptom 
+severity and percent of surface body area affected, overall severity.  These
+variables are represent the common confounders and risk factors for Psoriasis
+in the literature and normally adjusted for in statistical analyses.
 
-In addition to demographic and behavioral data collected at intake such as age, 
-gender, race, smoking status, alcohol usage; a new patient would present with 
-characteristics specific to psoriasis.  These features would include some if not
-all of the following: area of the body affected, type of symptom, symptom 
-severity, percent of surface body area affected, overall severity.
+In this project, I select patients that have been diagnosed with Psoriasis
+within the past 3 years, cluster them into homogenous groups via the feature
+variables. Then within each cluster, I identify the treatments used and for 
+each treatment, model the relationship with change in severity and reduction
+in body surface affected.
 
-Analysis Outline
----
+My main model is cluster_model in which I take tab delimited data, read 
+it into pandas and return dataframes that contain: continuous variables,
+categorical variables, outcome variables, and treatment.  I then do some
+preprocessing of the features to scale the continuous variables and create
+indicator variables for the categorcal variables.  I then run KMeans, 
+implementing the gap statistic to identify the optimal number of clusters.  My
+program returns a dictionary of all the cluster level variables including
+Plotly calls to separate barchart and linechart programs to produce the 
+treatment and outcome plots. These plots are stored in the cloud and their
+unique url is maintained in the cluster level dictionary of results.
 
-1. Identify an appropriate timeframe to collect the data, I believe data is
-available starting 5 or more years ago. The data would be sparse in the 
-beginning before more doctors began adopting the technology.  I would 
-probably look at the most recent 50-60% and choose a collection start 
-date based on that.
+Then in my web app, I have some basic html to have a user enter a new patient's
+information which calls on my model to classify the individual to a cluster.
+The treatment and outcome plots are then returned for that patient and would 
+identify the 3 most commonly used treatments and that treatment's 
+effectiveness.
 
-2. Collect all intake (first visits) for the patients, identifying what
-variable are available for a 'new' patient.
 
-3. Classify these patients using unsupervised learning into clusters.
-
-4. For each patient, collect all subsequent visits and extract treatments
-used and change in outcome.  An outcome variable will need to be either
-identified or created to measure effectiveness of treatment.
-
-5. For each patient identify the treatment (or combination of treatments) 
-that led to the best change in outcome.
-
-6. Within each cluster identify the most effective treatments used.
-
-7. Within each treatment, model change in outcome based on preliminary intake
-variables.
-
-8. Return list of treatments in decreasing order of effectiveness
 

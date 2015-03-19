@@ -14,19 +14,19 @@ def bsa_linechart(dic, ordered_trt_list, cluster):
     '''
     trace1 = Scatter(
         x=range(1, 37),
-        y=[(dic[ordered_trt_list[0]]['bsa'][1]+dic[ordered_trt_list[0]]['bsa'][0]*t) /
+        y=[(dic[ordered_trt_list[0]]['bsa'][1]+dic[ordered_trt_list[0]]['bsa'][0]*t) 
            for t in range(1, 37)], 
         name=ordered_trt_list[0]
         )
     trace2 = Scatter(
         x=range(1, 37),
-        y=[(dic[ordered_trt_list[1]]['bsa'][1]+dic[ordered_trt_list[1]]['bsa'][0]*t) /
+        y=[(dic[ordered_trt_list[1]]['bsa'][1]+dic[ordered_trt_list[1]]['bsa'][0]*t) 
            for t in range(1, 37)], 
         name=ordered_trt_list[1]
         )
     trace3 = Scatter(
         x=range(1, 37),
-        y=[(dic[ordered_trt_list[2]]['bsa'][1]+dic[ordered_trt_list[2]]['bsa'][0]*t) /
+        y=[(dic[ordered_trt_list[2]]['bsa'][1]+dic[ordered_trt_list[2]]['bsa'][0]*t) 
            for t in range(1, 37)], 
         name=ordered_trt_list[2]
         )

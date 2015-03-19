@@ -170,7 +170,7 @@ class Model(object):
                 c[treatment] += 1
 
             # identifying the 3 top treatments used for charts
-            most_common_treatments = [tup[0] for tup in / 
+            most_common_treatments = [tup[0] for tup in 
                                      c.most_common()][0:self.num_treatments]
 
             # Following will find pga distribution over time and the linear
@@ -227,6 +227,6 @@ def build_model(filepath, model_filename, num_treatments=3, max_k=10):
 
 
 if __name__ == '__main__':
-    filepath = '../../../data/sample/analysis_dataset.tsv'
+    filepath = '../data/analysis_dataset.tsv'
     model_filename = 'model.pkl'
     build_model(filepath, model_filename)
