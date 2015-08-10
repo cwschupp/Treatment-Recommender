@@ -1,8 +1,6 @@
-Preliminary Proposal (Clayton Schupp)
+Let's Help Scratch That Itch
 ===
 
-Let's Help Scratch That Itch
----
 
 Psoriasis is a common skin condition that changes the life cycle of skin cells
 and caused them to build up rapidly on the surface of the skin.  These extra
@@ -33,7 +31,7 @@ variables. Then within each cluster, I identify the treatments used and for
 each treatment, model the relationship with change in severity and reduction
 in body surface affected.
 
-My main model is cluster_model in which I take tab delimited data, read 
+My main model is cluster model in which I take tab delimited data, read 
 it into pandas and return dataframes that contain: continuous variables,
 categorical variables, outcome variables, and treatment.  I then do some
 preprocessing of the features to scale the continuous variables and create
